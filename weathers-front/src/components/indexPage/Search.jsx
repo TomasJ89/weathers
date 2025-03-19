@@ -4,7 +4,7 @@ import axios from "axios";
 function Search() {
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
-    const {selectedPlaces,setSelectedPlaces} = mainStore()
+    const {user,selectedPlaces,setSelectedPlaces} = mainStore()
 
     useEffect(() => {
         if (query.length < 3) {
@@ -34,8 +34,29 @@ function Search() {
         setSelectedPlaces([place, ...selectedPlaces]);
         setQuery("");
         setSuggestions([])
+        saveSearchToLocalStorage(place);
+        if (user) {
+            saveSearchToDB(place);
+        }
     }
-console.log(selectedPlaces);
+    async function saveSearchToDB(place) {
+        try {
+            await axios.post("http://localhost:2000/save-search", {
+                place: place,
+            });
+        } catch (error) {
+            console.error("Error saving search to database:", error);
+        }
+    }
+
+    function saveSearchToLocalStorage(place) {
+        let searches = JSON.parse(localStorage.getItem("searchHistory")) || [];
+        searches = searches.filter(item => item.place_id !== place.place_id);
+        searches.unshift(place);
+        searches = searches.slice(0, 10);
+        localStorage.setItem("searchHistory", JSON.stringify(searches));
+    }
+
     return (
         <div className="m-2 relative">
             <label className="input flex items-center border rounded p-2">
