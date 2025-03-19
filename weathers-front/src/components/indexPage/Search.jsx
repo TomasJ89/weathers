@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import mainStore from "../../store/mainStore.jsx";
-
+import axios from "axios";
 function Search() {
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
@@ -14,9 +14,13 @@ function Search() {
 
         const fetchLocations = async () => {
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
-                const data = await response.json();
-                setSuggestions(data);
+                const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+                    params: {
+                        q: query,
+                        format: "json"
+                    }
+                });
+                setSuggestions(response.data);
             } catch (error) {
                 console.error("Error fetching location data:", error);
             }
