@@ -1,41 +1,52 @@
-import React, {useRef, useState} from 'react';
+import React, { useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import mainStore from "../store/mainStore.jsx";
 
 function Login() {
     const nav = useNavigate()
     const [error, setError] = useState(null);
-    const [passHide, setPassHide] = useState(null);
-    const emailRef = useRef();
-    const passRef = useRef();
-    // const [state, setState] = useState("login");
-    // const { setLoggedIn, setUser } = mainStore();
-
-    const login = async (e) => {
-        e.preventDefault();
-        setError(null);
-
-        if (!emailRef.current?.value || !passRef.current?.value) {
-            return setError("All field must be filled");
-        }
-        const data = {
-            email: emailRef.current?.value,
-            password: passRef.current?.value,
-        };
-        // try {
-        //     const response = await http.post("/auth/login", data);
-        //     if (response.success) {
-        //         setLoggedIn(response.success);
-        //         setUser(response.user);
-        //         nav("/");
-        //         setError(null);
-        //     } else {
-        //         setError(response.message);
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        //     setError("An error occurred during login");
-        // }
+    const [passHide, setPassHide] = useState(true);
+    const [remember,setRemember] = useState(false);
+    const {user,setUser} = mainStore()
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+    const handleInputChange = (e) => {
+        const {name, value} = e.target;
+        setFormData((prev) => ({...prev, [name]: value}));
     };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError("");
+        const requiredFields = Object.entries(formData).filter(([_, value]) => !value);
+        if (requiredFields.length > 0) {
+            console.error("Validation Error: Missing fields", requiredFields);
+            return setError("Please fill in all fields.");
+        }
+        try {
+            const {...userData } = formData;
+            const res = await axios.post("http://localhost:2000/login", userData);
+            if(res.data.success) {
+                setUser(res.data.data)
+                localStorage.setItem("token", res.data.token);
+                if (remember) {
+                    localStorage.setItem("autologin", "true");
+                } else {
+                    localStorage.removeItem("autologin");
+                }
+                nav("/");
+            } else {
+                setError(res?.data?.message)
+            }
+        } catch (err) {
+            console.error("API request failed:", err);
+            setError(err.res?.data?.message || "Login failed. Please try again.");
+        }
+    };
+console.log(user)
     return (
         <div>
             <form
@@ -44,26 +55,26 @@ function Login() {
             >
                 <div className="w-80 p-6 bg-white border-t-4 border-gray-600 rounded-md shadow-md border-top lg:max-w-lg">
                     <h1 className="text-3xl font-semibold text-center text-gray-700">
-                        Prisijunkite
+                        Log in to My Weather
                     </h1>
                     <div className="space-y-4">
                         <div>
                             <label className="label">
-                                <span className="text-base label-text">El.paštas</span>
+                                <span className="text-base label-text">Email</span>
                             </label>
                             <input
                                 type="text"
                                 name="email"
-                                placeholder="Įveskite el.paštą"
+                                placeholder="Enter your email"
                                 className="w-full input input-bordered"
                                 maxLength="30"
-                                ref={emailRef}
-                                onChange={() => setError(null)}
+                                value={formData.email}
+                                onChange={handleInputChange}
                             />
                         </div>
                         <div>
                             <label className="label">
-                                <span className="text-base label-text">Slaptažodis</span>
+                                <span className="text-base label-text">Password</span>
                             </label>
                             <label className="input input-bordered flex items-center gap-2">
                                 <button
@@ -114,23 +125,28 @@ function Login() {
                                     type={passHide ? "password" : "text"}
                                     className="grow"
                                     name="password"
-                                    placeholder="Įveskite slaptažodį"
+                                    placeholder="Enter password"
                                     maxLength="20"
-                                    ref={passRef}
-                                    onChange={() => setError(null)}
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                 />
                             </label>
                         </div>
-                        {error && <a className="text-sm text-red-500 ">{error}</a>}
+                        <label className="fieldset-label">
+                            <input type="checkbox"  className="checkbox w-4 h-4" checked={remember}
+                                   onChange={(e) => setRemember(e.target.checked)} />
+                            Remember me
+                        </label>
+                        {error && <p className="text-sm text-red-500 ">{error}</p>}
                         <div className="flex flex-col justify-center">
-                            <button className="btn btn-sm shadow" onClick={login}>
-                                Prisijungti
+                            <button className="btn btn-sm shadow" onClick={handleLogin}>
+                                Log in
                             </button>
                             <span
                                 className="text-center mt-2 text-sm hover:underline cursor-pointer"
                                 onClick={() => nav("/registration")}
                             >
-                  Registruoti naują vartotoją
+                  Sign up. It's free and takes five seconds.
                 </span>
                         </div>
                     </div>

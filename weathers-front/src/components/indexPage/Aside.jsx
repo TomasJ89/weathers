@@ -1,7 +1,10 @@
 import React from 'react';
 
-function Aside({places}) {
+function Aside() {
+    const places = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
     return (
+
         <aside className=" bg-gray-100 p-4">
             <h2 className="text-lg font-semibold">Search History</h2>
             <ul>
