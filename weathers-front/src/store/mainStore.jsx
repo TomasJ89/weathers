@@ -6,7 +6,7 @@ const useStore = create((set,get) => ({
     setUser: (val) => set({ user: val }),
     loggedIn: false,
     setLoggedIn: (val) => set({ loggedIn: val }),
-    loading: true,
+    loading: false,
     setLoading: (val) => set({ loading: val }),
 
     selectedPlaces: [],
