@@ -28,7 +28,7 @@ function Login() {
         }
         try {
             const {...userData } = formData;
-            const res = await axios.post(`https://myweather-backend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud/login`, userData);
+            const res = await axios.post(`${BACKEND_URL}/login`, userData);
             if(res.data.success) {
                 setUser(res.data.data)
                 localStorage.setItem("token", res.data.token);
