@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
         if (err) {
             return res.status(401).json({ message: "Invalid or expired token", success: false, data: null });
         }
-        req.body.user = user;
+        req.user = user;
         next();
     });
 }
