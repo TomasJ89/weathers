@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import mainStore from "../store/mainStore.jsx";
 import {useNavigate} from "react-router-dom";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://myweather-backend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud";
 
 function MostViewed({ mostViewed }) {
     const [viewedList, setViewedList] = useState(mostViewed); // State to store most viewed places

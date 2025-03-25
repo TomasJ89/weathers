@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://myweather-backend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud";
 const useStore = create((set,get) => ({
 
     // User state management

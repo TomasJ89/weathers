@@ -8,7 +8,7 @@ import City from "./pages/City.jsx"
 import mainStore from "./store/mainStore.jsx";
 import {useEffect} from "react";
 import axios from "axios";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://myweather-backend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud";
 function App() {
     // Access state management functions and loading state from the store
     const {setUser,setLoading,loading} = mainStore()

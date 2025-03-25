@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import mainStore from "../store/mainStore.jsx";
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://myweather-backend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud";
 function Login() {
     const nav = useNavigate()
     const [error, setError] = useState(null);
