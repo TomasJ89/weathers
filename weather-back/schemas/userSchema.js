@@ -20,16 +20,12 @@ const userSchema = new Schema({
         required: true,
     },
 
-    conversations: {
+    mostViewed: {
         type: Array,
         required: true,
         default: []
     },
-    notifications: {
-        type: Array,
-        required: true,
-        default: []
-    }
+
 
 });
 const user = mongoose.model("users", userSchema);

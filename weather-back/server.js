@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express();
 
 // Define front-end origins for local and production environments
-const localFrontEnd = "http://localhost:5175";
+const localFrontEnd = "http://localhost:5173";
 const productionFrontEnd = "https://final-task-front.onrender.com"; // Update to front-end domain
 
 // MongoDB connection
