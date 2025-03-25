@@ -29,6 +29,11 @@ app.use(
 );
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.send("Server running! 🌍");
+});
+
 app.use("/", mainRouter);
 
 // Use the environment variable PORT or default to 2000
