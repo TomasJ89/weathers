@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import mainStore from "../store/mainStore.jsx";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 function Login() {
     const nav = useNavigate()
     const [error, setError] = useState(null);
@@ -28,7 +28,7 @@ function Login() {
         }
         try {
             const {...userData } = formData;
-            const res = await axios.post("http://localhost:2000/login", userData);
+            const res = await axios.post(`${BACKEND_URL}/login`, userData);
             if(res.data.success) {
                 setUser(res.data.data)
                 localStorage.setItem("token", res.data.token);

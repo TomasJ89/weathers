@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import mainStore from "../store/mainStore.jsx";
 import {useNavigate} from "react-router-dom";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 function MostViewed({ mostViewed }) {
     const [viewedList, setViewedList] = useState(mostViewed); // State to store most viewed places
@@ -15,7 +16,7 @@ function MostViewed({ mostViewed }) {
 
         try {
             // Send DELETE request to remove place from the server
-            const res = await axios.delete(`http://localhost:2000/delete-place/${placeId}`, {
+            const res = await axios.delete(`${BACKEND_URL}/delete-place/${placeId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.data.success) {

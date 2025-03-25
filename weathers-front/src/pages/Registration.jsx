@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 function Registration() {
     const nav = useNavigate()
     const [error, setError] = useState(null);
@@ -56,7 +57,7 @@ function Registration() {
 
             // Exclude confirmPassword before sending data to the backend
             const { confirmPassword, ...userData } = formData;
-            const res = await axios.post("http://localhost:2000/register", userData);
+            const res = await axios.post(`${BACKEND_URL}/register`, userData);
             if(res.data.success) {
                 nav("/login");
             } else {

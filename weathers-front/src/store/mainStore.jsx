@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const useStore = create((set,get) => ({
 
     // User state management
@@ -48,7 +48,7 @@ const useStore = create((set,get) => ({
         if (!token) return;
 
         try {
-            const res = await axios.post("http://localhost:2000/save-search",
+            const res = await axios.post(`${BACKEND_URL}/save-search`,
                 { place },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

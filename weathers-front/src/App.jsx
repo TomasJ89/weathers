@@ -8,6 +8,7 @@ import City from "./pages/City.jsx"
 import mainStore from "./store/mainStore.jsx";
 import {useEffect} from "react";
 import axios from "axios";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 function App() {
     // Access state management functions and loading state from the store
     const {setUser,setLoading,loading} = mainStore()
@@ -21,7 +22,7 @@ function App() {
             if (autoLogin) {
                 setLoading(true);
                 try {
-                    const res = await axios.post("http://localhost:2000/auto-login", {}, {
+                    const res = await axios.post(`${BACKEND_URL}/auto-login`, {}, {
                         headers: { Authorization: `Bearer ${token}` } // Send token in headers
                     });
                     if (res.data.success) {
