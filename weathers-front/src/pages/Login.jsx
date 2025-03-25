@@ -46,7 +46,7 @@ function Login() {
             setError(err.res?.data?.message || "Login failed. Please try again.");
         }
     };
-console.log(user)
+
     return (
         <div>
             <form

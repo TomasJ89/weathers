@@ -1,15 +1,15 @@
-import {Route, Routes, useNavigate} from "react-router-dom";
+import {Route, Routes,} from "react-router-dom";
 import Index from "./pages/Index.jsx";
 import Login from "./pages/Login.jsx";
 import Registration from "./pages/Registration.jsx";
 import Toolbar from "./components/Toolbar.jsx";
 import Footer from "./components/Footer.jsx";
+import City from "./pages/City.jsx"
 import mainStore from "./store/mainStore.jsx";
 import {useEffect} from "react";
 import axios from "axios";
 function App() {
-    const {setUser,setLoading} = mainStore()
-    const nav = useNavigate()
+    const {setUser,setLoading,loading} = mainStore()
 
     useEffect(() => {
         const checkAutoLogin = async () => {
@@ -24,7 +24,6 @@ function App() {
                     });
                     if (res.data.success) {
                         setUser(res.data.data);
-                        nav("/");
                         setLoading(false);
                     }
                 } catch (err) {
@@ -42,13 +41,18 @@ function App() {
     <>
      <div className="min-h-screen">
          <Toolbar/>
-         <div className="container mx-auto bg-[#F8FAFC] min-h-screen">
-             <Routes>
-                 <Route path="/" element={<Index/>}/>
-                 <Route path="/registration" element={<Registration/>}/>
-                 <Route path="/login" element={<Login/>}/>
-                 {/*<Route path="*" element={<NotFound/>}/>*/}
-             </Routes>
+         <div className="container mx-auto bg-[#F8FAFC] flex-grow min-h-screen flex items-center justify-center">
+             {loading ? (
+                 <span className="loading loading-ring loading-xl"></span>
+             ) : (
+                 <Routes>
+                     <Route path="/" element={<Index />} />
+                     <Route path="/registration" element={<Registration />} />
+                     <Route path="/login" element={<Login />} />
+                     <Route path="/city/:name" element={<City />} />
+                     {/*<Route path="*" element={<NotFound/>}/>*/}
+                 </Routes>
+             )}
          </div>
 
          <Footer/>

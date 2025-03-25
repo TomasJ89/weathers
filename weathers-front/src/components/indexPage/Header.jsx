@@ -3,7 +3,7 @@ import mainStore from "../../store/mainStore.jsx";
 import {useNavigate} from "react-router-dom";
 
 const Header = () => {
-    const { user, loading } = mainStore();
+    const { user } = mainStore();
     const nav = useNavigate();
 
     return (
@@ -25,8 +25,8 @@ const Header = () => {
                         </p>
                         {!user && (
                             <div className="flex gap-2 justify-center">
-                                <button className="btn btn-primary" onClick={() => nav("/login")}>Log In</button>
-                                <button className="btn btn-secondary" onClick={() => nav("/registration")}>Sign Up</button>
+                                <button className="btn " onClick={() => nav("/login")}>Log In</button>
+                                <button className="btn " onClick={() => nav("/registration")}>Sign Up</button>
                             </div>
                         )}
                     </div>

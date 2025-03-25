@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import mainStore from "../../store/mainStore.jsx";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 function Search() {
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
-    const {user,selectedPlaces,setSelectedPlaces} = mainStore()
+    const {user,saveSearchToDB,selectedPlaces,setSelectedPlaces} = mainStore()
+    const nav= useNavigate();
 
     useEffect(() => {
         if (query.length < 3) {
@@ -30,22 +32,15 @@ function Search() {
         return () => clearTimeout(debounce);
     }, [query]);
 
-    function setPlaces(place){
+    async function setPlaces(place){
         setSelectedPlaces([place, ...selectedPlaces]);
         setQuery("");
         setSuggestions([])
         saveSearchToLocalStorage(place);
         if (user) {
-            saveSearchToDB(place);
-        }
-    }
-    async function saveSearchToDB(place) {
-        try {
-            await axios.post("http://localhost:2000/save-search", {
-                place: place,
-            });
-        } catch (error) {
-            console.error("Error saving search to database:", error);
+            await saveSearchToDB(place);
+            nav(`/city/${place.name}?displayName=${place.display_name}&lat=${place.lat}&lon=${place.lon}`)
+
         }
     }
 
@@ -58,8 +53,8 @@ function Search() {
     }
 
     return (
-        <div className="m-2 relative">
-            <label className="input flex items-center border rounded p-2">
+        <div className=" relative mb-2">
+            <label className="input w-full  flex items-center border rounded p-2">
                 <svg className="h-[1em] opacity-50 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -77,7 +72,7 @@ function Search() {
                 />
             </label>
             {suggestions.length > 0 && (
-                <ul className="absolute bg-white border rounded mt-1 w-full max-h-60 overflow-auto shadow-lg">
+                <ul className="absolute z-50 bg-white border rounded mt-1 w-full max-h-60 overflow-auto shadow-lg">
                     {suggestions.map((place, index) => (
                         <li
                             key={index}
