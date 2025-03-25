@@ -27,11 +27,10 @@ app.use(
         credentials: true, // Allow cookies or authentication if needed
     })
 );
-
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("Server running! 🌍");
+    res.send("Server runningsss! 🌍");
 });
 
 app.use("/", mainRouter);
