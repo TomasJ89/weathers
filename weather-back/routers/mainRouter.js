@@ -1,7 +1,7 @@
 const express = require("express")
 const Router = express.Router()
 
-
+// Import controllers
 const {
     register,
     login,
@@ -10,6 +10,7 @@ const {
     deletePlace
 } = require("../controllers/mainController")
 
+// Import middleware
 const {
     registerValidate,
     loginValidate,
@@ -17,6 +18,7 @@ const {
 
 const authMiddle = require("../middleware/auth")
 
+// Define routes
 Router.post("/register", registerValidate, register)
 Router.post("/login", loginValidate, login)
 Router.post("/auto-login",authMiddle,autoLogin)
