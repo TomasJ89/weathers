@@ -7,9 +7,9 @@ const Header = () => {
     const nav = useNavigate();
 
     return (
-        <div>
+
             <div
-                className="hero min-h-16"
+                className="hero min-h-16 "
                 style={{
                     backgroundImage: "url(https://images.unsplash.com/photo-1580193813605-a5c78b4ee01a?q=80&w=1965&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
                 }}>
@@ -32,7 +32,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-        </div>
+
     );
 };
 

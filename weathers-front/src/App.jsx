@@ -41,9 +41,12 @@ function App() {
     <>
      <div className="min-h-screen">
          <Toolbar/>
-         <div className="container mx-auto bg-[#F8FAFC] flex-grow min-h-screen flex items-center justify-center">
+         <div className="container mx-auto bg-[#F8FAFC] min-h-screen">
              {loading ? (
-                 <span className="loading loading-ring loading-xl"></span>
+                 <div className="flex items-center justify-center">
+                     <span className="loading loading-ring loading-xl"></span>
+                 </div>
+
              ) : (
                  <Routes>
                      <Route path="/" element={<Index />} />
