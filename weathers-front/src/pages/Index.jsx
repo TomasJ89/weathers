@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from "../components/indexPage/Header.jsx";
 import Search from "../components/indexPage/Search.jsx";
 import PlaceCard from "../components/indexPage/PlaceCard.jsx";
@@ -8,6 +8,7 @@ import Pagination from "../components/Pagination.jsx";
 
 function Index() {
     // const { selectedPlaces } = mainStore();
+    const { getWeatherData,initializeWeatherData } = mainStore()
     const selectedPlaces = JSON.parse(localStorage.getItem("searchHistory")) || [];
     const itemsPerPage = 8;
     const [currentPage, setCurrentPage] = useState(1);
@@ -15,6 +16,9 @@ function Index() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedPlaces = selectedPlaces.slice(startIndex, startIndex + itemsPerPage);
 
+    useEffect(() => {
+        initializeWeatherData(selectedPlaces);
+    }, []);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -24,14 +28,14 @@ function Index() {
         <div>
             <Header />
             <div className="flex flex-col sm:flex-row gap-4 p-4">
-                <aside className="w-1/4">
+                <aside className="w-full sm:w-1/4">
                     <Search />
                     <Aside />
                 </aside>
-                <div className="w-3/4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {paginatedPlaces.map(place => (
-                            <PlaceCard key={place.place_id} place={place} />
+                <div className="w-full sm:w-3/4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-4 gap-4">
+                        {paginatedPlaces.map((place) => (
+                            <PlaceCard key={place.place_id} place={place} isNew={!getWeatherData(place.place_id)}  />
                         ))}
                     </div>
                     {selectedPlaces.length > itemsPerPage && (

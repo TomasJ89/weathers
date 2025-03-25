@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {getWeatherIcon} from '../../utils/getWeatherIcon.jsx';
+import {getWindDirection} from "../../utils/geWindDirection.jsx";
+import mainStore from "../../store/mainStore.jsx";
+import InfoModal from "../InfoModal.jsx";
+import {useNavigate} from "react-router-dom";
+import HourForecast from "../HourForecast.jsx";
 
-function PlaceCard({ place }) {
-    const [weatherData, setWeatherData] = useState(null);
+function PlaceCard({ place, isNew }) {
+    const { user,saveSearchToDB,getWeatherData, setWeatherData } = mainStore()
+    const nav = useNavigate();
+    const [weather, setWeather] = useState(getWeatherData(place.place_id));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [modal, setModal] = useState(false);
+
+    async function goToCityPage (place){
+        if (user) {
+            await saveSearchToDB(place);
+            nav(`/city/${place.name}?displayName=${place.display_name}&lat=${place.lat}&lon=${place.lon}`)
+        } else {
+            setModal(true);
+        }
+    }
 
     useEffect(() => {
-        fetchWeatherData();
-    }, [place]);
+        if (!weather && isNew) {
+            fetchWeatherData();
+        }
+    }, [weather, isNew]);
 
     const fetchWeatherData = async () => {
         setLoading(true);
@@ -16,68 +36,71 @@ function PlaceCard({ place }) {
         try {
             const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
                 params: {
-                    latitude: place.lat, // Naudojame vietos platumą
-                    longitude: place.lon, // Naudojame vietos ilgumą
-                    hourly:
-                        'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weathercode,cloudcover,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
-                    start_date: '2025-03-19', // Galite naudoti dinamišką datą, jei norite
-                    end_date: '2025-03-19', // Galite naudoti dinamišką datą, jei norite
-                },
+                    latitude: place.lat,
+                    longitude: place.lon,
+                    daily: ["weather_code", "temperature_2m_max", "temperature_2m_min","precipitation_sum", "wind_direction_10m_dominant"],
+                    hourly: ["temperature_2m", "weather_code", "dew_point_2m", "apparent_temperature", "precipitation","wind_speed_10m"],
+                    current: ["temperature_2m", "precipitation", "weather_code", "wind_speed_10m", "apparent_temperature", "showers", "pressure_msl", "wind_gusts_10m", "relative_humidity_2m", "rain", "cloud_cover", "wind_direction_10m", "is_day"],
+                    timezone: "auto"
+                }
             });
-            setWeatherData(response.data);
+            setWeather(response.data);
+            setWeatherData(place.place_id, response.data);
         } catch (err) {
-            setError('Nepavyko gauti duomenų. Patikrinkite savo interneto ryšį arba pabandykite vėliau.');
+            setError('Failed to retrieve data. Check your internet connection or click later.');
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
-
-    const getTimeFromIndex = (index) => {
-        const currentDate = new Date();
-        currentDate.setHours(currentDate.getHours() + index); // Pakeičiamas laikas, pridedant valandas
-
-        const hours = currentDate.getHours().toString().padStart(2, '0');
-        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-    };
-
+    const { dir, rotation } = getWindDirection(weather?.current.wind_direction_10m);
     return (
-        <div className="card w-52 bg-base-100 shadow-sm">
-            <div className="card-body">
-                <div className="flex justify-between">
-                    <h2 className="text-3xl font-bold">{place.name}</h2>
-                </div>
-                <ul className="mt-6 flex flex-col gap-2 text-xs">
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="size-4 me-2 inline-block text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>{place.display_name}</span>
-                    </li>
-                </ul>
-                {loading && <div>Kraunami duomenys...</div>}
-                {error && <div>{error}</div>}
-                {weatherData && (
+        <div className=" w-full bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-4">
+                {/* Place name */}
+                <h2 className="text-2xl font-bold text-gray-800">{place.name}</h2>
+                <p className="text-sm text-gray-500 truncate" title={place.display_name}>
+                    {place.display_name}
+                </p>
+
+                {/* Loading indicator */}
+                {loading && <div className="text-gray-500 mt-2">Loading data...</div>}
+
+                {/* Error message */}
+                {error && <div className="text-red-500 mt-2">{error}</div>}
+
+                {/* Current weather data */}
+                {weather && (
                     <div className="mt-6">
-                        <h3 className="font-bold text-lg">Orų prognozė</h3>
-                        <ul className="mt-2">
-                            {weatherData.hourly.time.slice(0, 5).map((time, index) => (
-                                <li key={index} className="mt-2">
-                                    <p>Laikas: {getTimeFromIndex(index)}</p>
-                                    <p>Temperatūra: {weatherData.hourly.temperature_2m[index]}°C</p>
-                                    <p>Santykinis drėgnumas: {weatherData.hourly.relative_humidity_2m[index]}%</p>
-                                    <p>Vėjo greitis: {weatherData.hourly.wind_speed_10m[index]} m/s</p>
-                                    <p>Precipitation: {weatherData.hourly.precipitation[index]} mm</p>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="flex items-center justify-between mb-4">
+                            {/* Weather icon and temperature */}
+                            <img
+                                src={`/icons/${getWeatherIcon(weather.current.weather_code, weather.current.is_day)}.svg`}
+                                alt="Weather forecast icon"
+                                className="w-12 h-12"
+                            />
+                            <div className="text-center">
+                                <p className="text-xl font-semibold">{weather.current.temperature_2m >= 0? `+${weather.current.temperature_2m}` :weather.current.temperature_2m }°C</p>
+                                <p className="text-sm text-gray-500">Feels like: {weather.current.apparent_temperature >= 0? `+${weather.current.apparent_temperature}` :weather.current.apparent_temperature}°C</p>
+                            </div>
+                        </div>
+
+                        {/* Time and additional data */}
+                        <div className="text-sm text-gray-600 space-y-2">
+                            <p>Time: {new Date(weather.current.time).toLocaleString(navigator.language, { dateStyle: "short", timeStyle: "short" })}</p>
+                            <p>Wind speed: {(weather.current.wind_speed_10m/ 3.6).toFixed(1)} m/s</p>
+                            <p>Precipitation: {weather.current.precipitation} mm</p>
+                            <p>{weather.current.is_day ? "Daytime" : "Nighttime"}</p>
+                            <p>Wind direction: {dir}</p>
+                        </div>
+
+                        {/* Next 5-hour forecast */}
+                        <HourForecast weather={weather}/>
                     </div>
                 )}
-                <div className="mt-6">
-                    <button className="btn btn-primary btn-block">Subscribe</button>
-                </div>
             </div>
+            <button className="btn m-1" onClick={()=> goToCityPage(place)}>More info</button>
+            {modal && <InfoModal isOpen={modal} onClose={() => setModal(false)}/>}
         </div>
     );
 }

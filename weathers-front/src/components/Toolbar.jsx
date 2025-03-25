@@ -3,7 +3,7 @@ import mainStore from "../store/mainStore.jsx";
 import {useNavigate} from "react-router-dom";
 
 function Toolbar() {
-    const {user,setUser,loading} = mainStore()
+    const {user,setUser} = mainStore()
     const nav = useNavigate()
 
     function handleLogout() {
@@ -14,7 +14,7 @@ function Toolbar() {
     }
 
     return (
-            <div className="navbar bg-[#3B82F6] shadow-sm">
+            <div className="navbar bg-gray-300 shadow-sm">
                 <div className="flex-1">
                     <a className="btn btn-ghost text-xl" onClick={()=>nav("/")}>My Weather</a>
                 </div>
