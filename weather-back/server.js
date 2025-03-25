@@ -8,7 +8,7 @@ const app = express();
 
 // Define front-end origins for local and production environments
 const localFrontEnd = "http://localhost:5173";
-const productionFrontEnd = "https://final-task-front.onrender.com"; // Update to front-end domain
+const productionFrontEnd = "https://myweather-frontend.1tggzg5ms3kd.eu-de.codeengine.appdomain.cloud" // Update to front-end domain
 
 // MongoDB connection
 mongoose
@@ -35,8 +35,8 @@ app.get("/", (req, res) => {
 
 app.use("/", mainRouter);
 
-// Use the environment variable PORT or default to 2000
-const PORT = process.env.PORT || 2000;
+// Use the environment variable PORT or default to 3000
+const PORT = process.env.PORT || 3000;
 
 // Start Express server
 app.listen(PORT, () => {
