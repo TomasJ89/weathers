@@ -15,7 +15,6 @@ function Registration() {
         password: "",
         confirmPassword: "",
     });
-
     // Handles form input changes and updates state accordingly.
     const handleInputChange = (e) => {
         const {name, value} = e.target;
