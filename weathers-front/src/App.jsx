@@ -9,9 +9,11 @@ import mainStore from "./store/mainStore.jsx";
 import {useEffect} from "react";
 import axios from "axios";
 function App() {
+    // Access state management functions and loading state from the store
     const {setUser,setLoading,loading} = mainStore()
 
     useEffect(() => {
+        // Auto-login effect that runs once when the app loads
         const checkAutoLogin = async () => {
             const autoLogin = localStorage.getItem("autologin");
             const token = localStorage.getItem("token");
@@ -20,10 +22,10 @@ function App() {
                 setLoading(true);
                 try {
                     const res = await axios.post("http://localhost:2000/auto-login", {}, {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: { Authorization: `Bearer ${token}` } // Send token in headers
                     });
                     if (res.data.success) {
-                        setUser(res.data.data);
+                        setUser(res.data.data); // Update user state on success
                         setLoading(false);
                     }
                 } catch (err) {
@@ -39,8 +41,10 @@ function App() {
 
   return (
     <>
+        {/* Main layout container */}
      <div className="min-h-screen">
-         <Toolbar/>
+         <Toolbar/>  {/* Top navigation bar */}
+         {/* Main content area */}
          <div className="container mx-auto bg-[#F8FAFC] min-h-screen">
              {loading ? (
                  <div className="flex items-center justify-center">
@@ -48,6 +52,7 @@ function App() {
                  </div>
 
              ) : (
+                 // Render routes when loading is complete
                  <Routes>
                      <Route path="/" element={<Index />} />
                      <Route path="/registration" element={<Registration />} />
@@ -58,7 +63,7 @@ function App() {
              )}
          </div>
 
-         <Footer/>
+         <Footer/>  {/* Bottom footer */}
      </div>
     </>
   )

@@ -5,6 +5,8 @@ function Registration() {
     const nav = useNavigate()
     const [error, setError] = useState(null);
     const [passHide, setPassHide] = useState(true);
+
+    // Form data state
     const [formData, setFormData] = useState({
         email: "",
         name: "",
@@ -12,36 +14,47 @@ function Registration() {
         password: "",
         confirmPassword: "",
     });
+
+    // Handles form input changes and updates state accordingly.
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setFormData((prev) => ({...prev, [name]: value}));
     };
+
+    // Validates email format using regex.
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    // Validates input fields before making an API request.
     const handleRegistration = async (e) => {
         e.preventDefault();
         setError("");
+
+        // Check for missing fields
         const requiredFields = Object.entries(formData).filter(([_, value]) => !value);
         if (requiredFields.length > 0) {
             console.error("Validation Error: Missing fields", requiredFields);
             return setError("Please fill in all fields.");
         }
-
+        // Check if passwords match
         if (formData.password !== formData.confirmPassword) {
             console.error("Validation Error: Passwords do not match");
             return setError("Passwords do not match.");
         }
-
+        // Check password length
         if (formData.password.length < 6) {
             console.error("Validation Error: Password too short");
             return setError("Password must be at least 6 characters long.");
         }
 
+        // Validate email format
         if (!validateEmail(formData.email)) {
             console.error("Validation Error: Wrong email format");
             return setError("Invalid email format.");
         }
 
         try {
+
+            // Exclude confirmPassword before sending data to the backend
             const { confirmPassword, ...userData } = formData;
             const res = await axios.post("http://localhost:2000/register", userData);
             if(res.data.success) {
@@ -67,6 +80,7 @@ function Registration() {
                         Create your account
                     </h1>
                     <div className="space-y-4">
+                        {/* Name Input */}
                         <div>
                             <label className="label">
                                 <span className="text-base label-text">Name</span>
@@ -81,6 +95,7 @@ function Registration() {
                                 onChange={handleInputChange}
                             />
                         </div>
+                        {/* Email Input */}
                         <div>
                             <label className="label">
                                 <span className="text-base label-text">Email</span>
@@ -95,6 +110,7 @@ function Registration() {
                                 onChange={handleInputChange}
                             />
                         </div>
+                        {/* Password Input */}
                         <div>
                             <label className="label flex justify-between">
                                 <span className="text-base label-text">Password</span>

@@ -2,21 +2,29 @@ import { create } from "zustand";
 import axios from "axios";
 
 const useStore = create((set,get) => ({
+
+    // User state management
     user: null,
     setUser: (val) => set({ user: val }),
-    loggedIn: false,
-    setLoggedIn: (val) => set({ loggedIn: val }),
+
+    // Loading state for async operations
     loading: false,
     setLoading: (val) => set({ loading: val }),
 
     selectedPlaces: [],
     setSelectedPlaces: (val) => set({ selectedPlaces: val }),
+
+
+    // Weather data storage and initialization
     weatherData: {},
     weatherInitialized: false,
     setWeatherData: (placeId, data) =>
         set((state) => ({
             weatherData: { ...state.weatherData, [placeId]: data },
         })),
+
+    //  Initializes weather data for multiple places.
+    // *Ensures that uninitialized places have a null value in the state.
     getWeatherData: (placeId) => get().weatherData[placeId] || null,
     initializeWeatherData: (places) => {
         if (get().weatherInitialized) return;
@@ -34,6 +42,7 @@ const useStore = create((set,get) => ({
         });
     },
 
+    // Saves a searched place to the database for the authenticated user.
     saveSearchToDB: async (place) => {
         const token = localStorage.getItem("token");
         if (!token) return;

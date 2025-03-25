@@ -21,6 +21,7 @@ const WeatherCard = () => {
     const [error, setError] = useState(null);
     const [forecastType, setForecastType] = useState("5days")
 
+    // Fetch weather data when latitude and longitude are available
     useEffect(() => {
         if (!lat || !lon) {
             setError("Wrong data");
@@ -30,6 +31,7 @@ const WeatherCard = () => {
         fetchWeatherData();
     }, [lat, lon]);
 
+    // Function to fetch weather data from Open-Meteo API
     const fetchWeatherData = async () => {
         setLoading(true);
         try {
@@ -60,10 +62,12 @@ const WeatherCard = () => {
 
     return (
         <div className="p-4">
+            {/* Search bar */}
             <div className="max-w-4xl mx-auto md:min-w-[745px]">
                 <Search/>
             </div>
 
+            {/* Main weather card */}
             <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 ">
                 {/* Current forecast */}
                 <div className="border-b pb-4 mt ">
@@ -72,6 +76,7 @@ const WeatherCard = () => {
                         Current local time: {new Date(data.current.time).toLocaleTimeString(navigator.language)}
                     </p>
 
+                    {/* Temperature and weather icon */}
                     <div className="flex flex-col md:flex-row items-center justify-between mt-4">
                         <div className="text-center md:text-left">
                             <p className="text-5xl font-bold text-gray-900">
@@ -89,11 +94,14 @@ const WeatherCard = () => {
                         />
                     </div>
 
+                    {/* Additional weather details */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 text-gray-700 text-sm md:text-base">
                         <p><strong>Pressure:</strong> {data.current.pressure_msl} hPa</p>
                         <p><strong>Cloudiness:</strong> {data.current.cloud_cover}%</p>
                         <p><strong>Wind:</strong> {(data.current.wind_speed_10m/ 3.6).toFixed(1)} m/s</p>
                         <p><strong>Wind gusts:</strong> {(data.current.wind_gusts_10m/ 3.6).toFixed(1)} m/s</p>
+
+                        {/* Wind direction with rotating arrow */}
                         <div className="flex items-center gap-1">
                             <strong>Wind direction:</strong> ({dir})
                             <img
@@ -107,7 +115,7 @@ const WeatherCard = () => {
                     </div>
                 </div>
 
-                {/* 5 days forecast or 5 hours forecast */}
+                {/* Forecast selection buttons */}
                 <div className="mt-6">
                     <div className="flex justify-center mb-4">
                         <button
@@ -128,11 +136,13 @@ const WeatherCard = () => {
                         </button>
                     </div>
 
+                    {/* Display either 5-day or 5-hour forecast */}
                         {forecastType==="5days" ? <DaysGrid data={data}/>:<HourList data={data}/>}
 
 
                 </div>
             </div>
+            {/* Most viewed locations section (only for logged-in users) */}
             {user && <MostViewed  mostViewed={user.mostViewed}  />}
         </div>
 

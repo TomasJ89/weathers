@@ -4,12 +4,18 @@ import mainStore from "../../store/mainStore.jsx";
 import InfoModal from "../InfoModal.jsx";
 function Aside() {
     const{user,saveSearchToDB} = mainStore()
-    const places = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    const places = JSON.parse(localStorage.getItem("searchHistory")) || []; // Retrieve search history from localStorage
+
+    // State for dropdown and modal visibility
     const [isOpen, setIsOpen] = useState(false);
     const [modal, setModal] = useState(false);
+
     const nav = useNavigate();
+
+    // Toggle dropdown menu
     const toggleDropdown = () => setIsOpen(!isOpen);
 
+    // Navigate to city page with authentication check
     async function goToCityPage (place){
         if (user) {
             await saveSearchToDB(place);
@@ -21,6 +27,7 @@ function Aside() {
 
     return (
         <aside className="bg-gray-100 p-4 relative">
+            {/* Header with dropdown toggle for small screens */}
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">Search History</h2>
                 <div className="sm:hidden">
@@ -45,6 +52,7 @@ function Aside() {
                 </div>
             </div>
 
+            {/* Dropdown list for small screens */}
             {isOpen && (
                 <ul className="sm:hidden mt-2">
                     {places.length > 0 && places.map((place) => (
@@ -54,6 +62,8 @@ function Aside() {
                     ))}
                 </ul>
             )}
+
+            {/* Search history for larger screens */}
             <div className="hidden sm:block mt-2">
                 <ul>
                     {places.length > 0 && places.map((place) => (
@@ -63,6 +73,7 @@ function Aside() {
                     ))}
                 </ul>
             </div>
+            {/* Modal for login requirement */}
             {modal && <InfoModal isOpen={modal} onClose={() => setModal(false)}/>}
         </aside>
     );

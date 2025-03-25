@@ -6,6 +6,7 @@ function InfoModal({ isOpen, onClose }) {
     const modalRef = useRef(null);
 
     useEffect(() => {
+        // Show or close the modal based on the `isOpen` state
         if (isOpen && modalRef.current) {
             modalRef.current.showModal();
         } else if (!isOpen && modalRef.current) {
@@ -26,6 +27,7 @@ function InfoModal({ isOpen, onClose }) {
                 </p>
                 <button className="btn" onClick={() => nav("/login")}>Log in</button>
             </div>
+            {/* Click outside the modal to close it */}
             <div className="modal-backdrop" onClick={onClose}></div>
         </dialog>
     );

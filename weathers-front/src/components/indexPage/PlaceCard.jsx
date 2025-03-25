@@ -10,26 +10,30 @@ import HourForecast from "../HourForecast.jsx";
 function PlaceCard({ place, isNew }) {
     const { user,saveSearchToDB,getWeatherData, setWeatherData } = mainStore()
     const nav = useNavigate();
+    // Local states for weather data, loading, error, and modal visibility
     const [weather, setWeather] = useState(getWeatherData(place.place_id));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [modal, setModal] = useState(false);
 
+    // Function to navigate to the city page if the user is logged in
     async function goToCityPage (place){
         if (user) {
-            await saveSearchToDB(place);
+            await saveSearchToDB(place);// Save search to database
             nav(`/city/${place.name}?displayName=${place.display_name}&lat=${place.lat}&lon=${place.lon}`)
         } else {
-            setModal(true);
+            setModal(true);// Show login modal if user is not logged in
         }
     }
 
+    // Fetch weather data only if it's a new place and no data exists
     useEffect(() => {
         if (!weather && isNew) {
             fetchWeatherData();
         }
     }, [weather, isNew]);
 
+    // Function to fetch weather data from the API
     const fetchWeatherData = async () => {
         setLoading(true);
         setError(null);
@@ -53,6 +57,8 @@ function PlaceCard({ place, isNew }) {
             setLoading(false);
         }
     };
+
+    // Get wind direction data
     const { dir, rotation } = getWindDirection(weather?.current.wind_direction_10m);
     return (
         <div className=" w-full bg-white rounded-lg shadow-lg overflow-hidden">
@@ -100,6 +106,7 @@ function PlaceCard({ place, isNew }) {
                 )}
             </div>
             <button className="btn m-1" onClick={()=> goToCityPage(place)}>More info</button>
+            {/* Info Modal for login requirement */}
             {modal && <InfoModal isOpen={modal} onClose={() => setModal(false)}/>}
         </div>
     );

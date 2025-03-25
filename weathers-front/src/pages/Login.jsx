@@ -8,7 +8,7 @@ function Login() {
     const [error, setError] = useState(null);
     const [passHide, setPassHide] = useState(true);
     const [remember,setRemember] = useState(false);
-    const {user,setUser} = mainStore()
+    const {setUser} = mainStore()
     const [formData, setFormData] = useState({
         email: "",
         password: "",
