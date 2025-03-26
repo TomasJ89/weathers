@@ -23,10 +23,16 @@ mongoose
 // Middleware setup for Express.js
 app.use(
     cors({
-        origin: [localFrontEnd, productionFrontEnd], // Allow both local and production
+        origin: [localFrontEnd, productionFrontEnd],
         credentials: true, // Allow cookies or authentication if needed
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     })
 );
+
+// Handle preflight requests properly
+app.options("*", cors());
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
